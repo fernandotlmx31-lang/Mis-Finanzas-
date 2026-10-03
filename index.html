@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0d0f" id="themeColor">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Mis Finanzas</title>
+<style>
+:root {
+  --bg: #0b0d0f;
+  --card: #13171b;
+  --tx: #d9dee3;
+  --mu: #7b858f;
+  --pr: #c9d0d6;
+  --pt: #0b0d0f;
+  --ok: #3fb27f;
+  --bad: #e5534b;
+  --wa: #d4a72c;
+  --bd: #232a31;
+  --sheet-bg: rgba(0,0,0,.65);
+  color-scheme: dark;
+}
+html.light {
+  --bg: #f4f6f8;
+  --card: #ffffff;
+  --tx: #1a1f24;
+  --mu: #5c6670;
+  --pr: #1a1f24;
+  --pt: #ffffff;
+  --ok: #1a8f5c;
+  --bad: #d03a32;
+  --wa: #b38600;
+  --bd: #d8dee4;
+  --sheet-bg: rgba(0,0,0,.45);
+  color-scheme: light;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html {
+  background: var(--bg);
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+  height: 100%;
+  min-height: 100%;
+  min-height: 100vh;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--tx);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-variant-numeric: tabular-nums;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  min-height: 100%;
+  min-height: 100vh;
+}
+main {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 16px;
+}
+h1 {
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--mu);
+  margin: 2px 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--bd);
+  font-weight: 600;
+}
+h2 {
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--mu);
+  margin: 22px 0 8px;
+  font-weight: 600;
+}
+b {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 600;
+}
+.card, .item {
+  background: var(--card);
+  border: 1px solid var(--bd);
+  border-radius: 4px;
+  padding: 14px;
+  margin-bottom: 8px;
+}
+.item { padding: 12px; }
+.big {
+  font: 600 30px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: -.02em;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.mu { color: var(--mu); font-size: 12px; }
+.in { color: var(--ok); }
+.out { color: var(--bad); }
+button, input, select { font: inherit; color: var(--tx); }
+.btn {
+  background: var(--pr);
+  color: var(--pt);
+  border: 0;
+  border-radius: 3px;
+  padding: 11px 14px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.btn.s {
+  background: transparent;
+  color: var(--tx);
+  border: 1px solid var(--bd);
+  padding: 6px 10px;
+  font-size: 11px;
+}
+.btn.d {
+  background: transparent;
+  color: var(--bad);
+  border: 1px solid var(--bad);
+}
+.btn.w { width: 100%; margin-top: 6px; }
+nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  background: var(--card);
+  border-top: 1px solid var(--bd);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  z-index: 10;
+}
+nav button {
+  flex: 1;
+  background: none;
+  border: 0;
+  border-top: 2px solid transparent;
+  padding: 13px 4px;
+  color: var(--mu);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+nav button.on {
+  color: var(--tx);
+  border-top-color: var(--pr);
+  background: #0f1317;
+  font-weight: 700;
+}
+html.light nav button.on {
+  background: #eef1f4;
+}
+.sheet {
+  position: fixed;
+  inset: 0;
+  background: var(--sheet-bg);
+  display: none;
+  align-items: flex-end;
+  z-index: 20;
+}
+.sheet.show { display: flex; }
+.sheet > div {
+  background: var(--card);
+  border-top: 1px solid var(--bd);
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  border-radius: 8px 8px 0 0;
+  padding: 18px;
+  padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  max-height: 90%;
+  overflow: auto;
+}
+label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--mu);
+  margin: 12px 0 4px;
+}
+input, select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid var(--bd);
+  border-radius: 3px;
+  background: var(--bg);
+  font-size: 15px;
+  color: var(--tx);
+}
+input:focus, select:focus {
+  outline: 1px solid var(--pr);
+  border-color: var(--pr);
+}
+.seg { display: flex; gap: 6px; }
+.seg button {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid var(--bd);
+  background: var(--bg);
+  border-radius: 3px;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.seg button.on {
+  background: var(--pr);
+  color: var(--pt);
+  border-color: var(--pr);
+  font-weight: 700;
+}
+.ok { color: var(--ok); font-weight: 600; }
+
+.storage-warn {
+  background: #2a1f0a;
+  border: 1px solid var(--wa);
+  color: var(--wa);
+  font-size: 12px;
+  padding: 10px 14px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+html.light .storage-warn {
+  background: #fff8e6;
+}
+.tools {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.tools .btn {
+  flex: 1;
+  min-width: 110px;
+  margin-top: 0;
+  font-size: 11px;
+  padding: 10px 8px;
+}
+.hidden-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.loading {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--mu);
+  font-size: 14px;
+}
+</style>
+</head>
+<body>
+<main id="app">
+  <div class="loading">Cargando Mis Finanzas…</div>
+</main>
+<nav id="nav"></nav>
+<div class="sheet" id="sheet"><div id="sbody"></div></div>
+<input type="file" id="importFile" class="hidden-input" accept=".json,application/json">
+
+<script>
+(function () {
+  'use strict';
+
+  // Captura cualquier error no controlado
+  window.onerror = function (msg, url, line) {
+    var app = document.getElementById('app');
+    if (app) {
+      app.innerHTML = '<div class="card" style="margin:20px"><h1>Error</h1><p class="mu">' +
+        String(msg) + ' (línea ' + line + ')</p></div>';
+    }
+    return false;
+  };
+
+  var $ = function (s) { return document.querySelector(s); };
+  var KEY = 'finanzas_v1';
+  var THEME_KEY = 'finanzas_theme';
+
+  // Estado inicial
+  var S = {
+    accounts: [{ id: 'cash', name: 'Efectivo', bank: '', balance: 0 }],
+    tx: [],
+    rec: [],
+    cards: []
+  };
+
+  // Tema
+  var isLight = false;
+  try {
+    isLight = localStorage.getItem(THEME_KEY) === 'light';
+  } catch (e) {}
+
+  function applyTheme() {
+    if (isLight) {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+    var meta = document.getElementById('themeColor');
+    if (meta) meta.content = isLight ? '#f4f6f8' : '#0b0d0f';
+    try {
+      localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
+    } catch (e) {}
+  }
+  applyTheme();
+
+  // Detección robusta de localStorage
+  var storageOk = false;
+  try {
+    var testKey = '__finanzas_test__';
+    localStorage.setItem(testKey, '1');
+    localStorage.removeItem(testKey);
+    storageOk = true;
+    var raw = localStorage.getItem(KEY);
+    if (raw) {
+      var parsed = JSON.parse(raw);
+      S = {
+        accounts: (parsed.accounts && parsed.accounts.length) ? parsed.accounts : S.accounts,
+        tx: Array.isArray(parsed.tx) ? parsed.tx : [],
+        rec: Array.isArray(parsed.rec) ? parsed.rec : [],
+        cards: Array.isArray(parsed.cards) ? parsed.cards : []
+      };
+    }
+  } catch (e) {
+    console.warn('localStorage no disponible:', e);
+  }
+
+  function save() {
+    if (!storageOk) return;
+    try {
+      localStorage.setItem(KEY, JSON.stringify(S));
+    } catch (e) {
+      storageOk = false;
+    }
+  }
+
+  function fmt(n) {
+    return (n || 0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+  }
+  function uid() {
+    return Math.random().toString(36).slice(2, 9);
+  }
+  function today() {
+    return new Date().toISOString().slice(0, 10);
+  }
+  function mk() {
+    return today().slice(0, 7);
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function acc(id) {
+    for (var i = 0; i < S.accounts.length; i++) {
+      if (S.accounts[i].id === id) return S.accounts[i];
+    }
+    return null;
+  }
+  function accOpts(sel) {
+    var html = '';
+    for (var i = 0; i < S.accounts.length; i++) {
+      var a = S.accounts[i];
+      html += '<option value="' + a.id + '"' + (a.id === sel ? ' selected' : '') + '>' +
+        esc(a.name) + (a.bank ? ' · ' + esc(a.bank) : '') + '</option>';
+    }
+    return html;
+  }
+
+  var tab = 'home';
+  var txType = 'gasto';
+  var tabs = [
+    ['home', 'Resumen'],
+    ['tx', 'Movimientos'],
+    ['rec', 'Recurrentes'],
+    ['acc', 'Cuentas']
+  ];
+  var KINDS = ['Renta', 'Luz', 'Agua', 'Gas', 'Internet / Teléfono', 'Préstamo', 'Servicio', 'Otro'];
+
+  // Función global para cambiar de pestaña (necesario cuando se abre con data: URL en Safari)
+  window.setTab = function (newTab) {
+    tab = newTab;
+    render();
+  };
+
+  function openSheet(h) {
+    $('#sbody').innerHTML = h;
+    $('#sheet').classList.add('show');
+  }
+  var _yes = null;
+  function ask(msg, label, fn) {
+    _yes = fn;
+    openSheet('<h1>' + msg + '</h1>' +
+      '<button class="btn w" onclick="askYes()">' + label + '</button>' +
+      '<button class="btn w s" onclick="closeSheet()">Cancelar</button>');
+  }
+  window.askYes = function () {
+    var f = _yes;
+    _yes = null;
+    closeSheet();
+    if (f) f();
+  };
+  window.closeSheet = function () {
+    $('#sheet').classList.remove('show');
+  };
+  $('#sheet').addEventListener('click', function (e) {
+    if (e.target.id === 'sheet') closeSheet();
+  });
+
+  /* ========== EXPORTAR / IMPORTAR ========== */
+  window.exportData = function () {
+    var data = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      data: S
+    };
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'mis-finanzas-' + today() + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  };
+
+  window.triggerImport = function () {
+    $('#importFile').click();
+  };
+
+  $('#importFile').addEventListener('change', function (e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      try {
+        var parsed = JSON.parse(ev.target.result);
+        var incoming = parsed.data || parsed;
+        if (!incoming.accounts || !Array.isArray(incoming.accounts)) {
+          throw new Error('El archivo no tiene la estructura esperada');
+        }
+        ask(
+          '¿Reemplazar todos los datos actuales con los del archivo?',
+          'Importar y reemplazar',
+          function () {
+            S = {
+              accounts: incoming.accounts.length ? incoming.accounts : S.accounts,
+              tx: Array.isArray(incoming.tx) ? incoming.tx : [],
+              rec: Array.isArray(incoming.rec) ? incoming.rec : [],
+              cards: Array.isArray(incoming.cards) ? incoming.cards : []
+            };
+            save();
+            render();
+            openSheet('<h1>Importación exitosa</h1>' +
+              '<p class="mu">Se cargaron ' + S.accounts.length + ' cuentas, ' + S.tx.length +
+              ' movimientos, ' + S.rec.length + ' recurrentes y ' + S.cards.length + ' tarjetas.</p>' +
+              '<button class="btn w" onclick="closeSheet()">Aceptar</button>');
+          }
+        );
+      } catch (err) {
+        openSheet('<h1>Error al importar</h1>' +
+          '<p class="mu">' + esc(err.message || 'Archivo inválido') + '</p>' +
+          '<button class="btn w" onclick="closeSheet()">Entendido</button>');
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  });
+
+  window.toggleTheme = function () {
+    isLight = !isLight;
+    applyTheme();
+    render();
+  };
+
+  /* ========== RENDER ========== */
+  function render() {
+    try {
+      var navHtml = '';
+      for (var i = 0; i < tabs.length; i++) {
+        var k = tabs[i][0], l = tabs[i][1];
+        navHtml += '<button class="' + (tab === k ? 'on' : '') +
+          '" onclick="setTab(\'' + k + '\')">' + l + '</button>';
+      }
+      $('#nav').innerHTML = navHtml;
+
+      var content = '';
+      if (tab === 'home') content = home();
+      else if (tab === 'tx') content = tx();
+      else if (tab === 'rec') content = rec();
+      else content = accounts();
+
+      var warn = !storageOk
+        ? '<div class="storage-warn">⚠ Los datos no se guardarán al cerrar (restricción de Safari). Usa Edge o exporta un respaldo.</div>'
+        : '';
+      $('#app').innerHTML = warn + content;
+      window.scrollTo(0, 0);
+    } catch (err) {
+      console.error(err);
+      $('#app').innerHTML = '<div class="card"><h1>Error</h1><p class="mu">Ocurrió un problema al cargar la app.</p></div>';
+    }
+  }
+  window.render = render;
+
+  function toolsBar() {
+    return '<div class="tools">' +
+      '<button class="btn s" onclick="toggleTheme()">' + (isLight ? '🌙 Oscuro' : '☀️ Claro') + '</button>' +
+      '<button class="btn s" onclick="exportData()">Exportar</button>' +
+      '<button class="btn s" onclick="triggerImport()">Importar</button>' +
+      '</div>';
+  }
+
+  function home() {
+    var total = 0;
+    for (var i = 0; i < S.accounts.length; i++) total += S.accounts[i].balance;
+    var m = mk();
+    var inc = 0, exp = 0;
+    for (var j = 0; j < S.tx.length; j++) {
+      var t = S.tx[j];
+      if (t.date && t.date.indexOf(m) === 0) {
+        if (t.type === 'ingreso') inc += t.amount;
+        else if (t.type === 'gasto') exp += t.amount;
+      }
+    }
+    var pend = 0;
+    for (var k = 0; k < S.rec.length; k++) {
+      var r = S.rec[k];
+      if (!r.paid || !r.paid[m]) pend += r.amount;
+    }
+    var cardsDebt = 0;
+    for (var c = 0; c < S.cards.length; c++) cardsDebt += S.cards[c].used;
+
+    var html = '<h1>Mis Finanzas</h1>' +
+      '<div class="card"><div class="mu">Dinero total disponible</div>' +
+      '<div class="big">' + fmt(total) + '</div>' +
+      '<div class="mu">' + S.accounts.length + ' cuenta(s) incluyendo efectivo</div></div>' +
+      '<div class="row" style="gap:10px">' +
+      '<div class="card" style="flex:1"><div class="mu">Ingresos del mes</div><b class="in">' + fmt(inc) + '</b></div>' +
+      '<div class="card" style="flex:1"><div class="mu">Gastos del mes</div><b class="out">' + fmt(exp) + '</b></div></div>' +
+      '<div class="card"><div class="row"><span>Pagos recurrentes pendientes</span><b class="out">' + fmt(pend) + '</b></div>' +
+      '<div class="row" style="margin-top:6px"><span>Te quedaría después de pagarlos</span>' +
+      '<b class="' + (total - pend < 0 ? 'out' : 'in') + '">' + fmt(total - pend) + '</b></div></div>';
+
+    if (S.cards.length) {
+      html += '<div class="card row"><span>Deuda en tarjetas de crédito</span><b class="out">' + fmt(cardsDebt) + '</b></div>';
+    }
+    html += '<button class="btn w" onclick="txForm()">+ Registrar movimiento</button><h2>Cuentas</h2>';
+    for (var a = 0; a < S.accounts.length; a++) {
+      var accItem = S.accounts[a];
+      html += '<div class="item row"><div>' + esc(accItem.name) +
+        '<div class="mu">' + esc(accItem.bank) + '</div></div><b>' + fmt(accItem.balance) + '</b></div>';
+    }
+    html += toolsBar();
+    return html;
+  }
+
+  function tx() {
+    var list = S.tx.slice().sort(function (a, b) {
+      return (b.date || '').localeCompare(a.date || '') || 0;
+    });
+    var html = '<h1>Movimientos</h1><button class="btn w" onclick="txForm()">+ Nuevo ingreso / gasto</button><h2>Historial</h2>';
+    if (!list.length) {
+      html += '<p class="mu">Aún no hay movimientos.</p>';
+      return html;
+    }
+    for (var i = 0; i < list.length; i++) {
+      var t = list[i];
+      var accountName = '—';
+      var a = acc(t.acc);
+      if (a) accountName = a.name;
+      else {
+        for (var c = 0; c < S.cards.length; c++) {
+          if (S.cards[c].id === t.card) { accountName = S.cards[c].name; break; }
+        }
+      }
+      html += '<div class="item row" style="cursor:pointer" onclick="txForm(\'' + t.id + '\')">' +
+        '<div><b>' + esc(t.desc || t.cat) + '</b>' +
+        '<div class="mu">' + t.date + ' · ' + esc(accountName) + (t.cat ? ' · ' + esc(t.cat) : '') + '</div></div>' +
+        '<b class="' + (t.type === 'ingreso' ? 'in' : 'out') + '">' +
+        (t.type === 'ingreso' ? '+' : '−') + fmt(t.amount) + '</b></div>';
+    }
+    return html;
+  }
+
+  window.txForm = function (id) {
+    var e = null;
+    if (id) {
+      for (var i = 0; i < S.tx.length; i++) {
+        if (S.tx[i].id === id) { e = S.tx[i]; break; }
+      }
+    }
+    var t = e || { amount: '', desc: '', cat: '', acc: 'cash', date: today() };
+    if (e) txType = e.type;
+    var seg = !e || (!e.card && e.type !== 'pago');
+
+    var html = '<h1>' + (e ? 'Editar movimiento' : 'Nuevo movimiento') + '</h1>';
+    if (seg) {
+      html += '<div class="seg">' +
+        '<button id="bg" class="' + (txType === 'gasto' ? 'on' : '') + '" onclick="setT(\'gasto\')">Gasto</button>' +
+        '<button id="bi" class="' + (txType === 'ingreso' ? 'on' : '') + '" onclick="setT(\'ingreso\')">Ingreso</button></div>';
+    }
+    html += '<form onsubmit="return addTx(event,\'' + (id || '') + '\')">' +
+      '<label>Monto</label><input name="amount" type="number" step="0.01" min="0" inputmode="decimal" value="' + t.amount + '" required>' +
+      '<label>Descripción</label><input name="desc" value="' + esc(t.desc) + '" placeholder="Ej. Despensa, Sueldo">' +
+      '<label>Categoría</label><input name="cat" value="' + esc(t.cat) + '" placeholder="Ej. Comida, Transporte">';
+
+    if (e && e.card && e.type === 'gasto') {
+      var cardName = 'tarjeta';
+      for (var c = 0; c < S.cards.length; c++) {
+        if (S.cards[c].id === e.card) { cardName = S.cards[c].name; break; }
+      }
+      html += '<p class="mu">Compra con ' + esc(cardName) + '</p>';
+    } else {
+      html += '<label>Cuenta</label><select name="acc">' + accOpts(t.acc) + '</select>';
+    }
+    html += '<label>Fecha</label><input name="date" type="date" value="' + t.date + '" required>' +
+      '<button class="btn w">Guardar</button>';
+    if (e) html += '<button type="button" class="btn w d" onclick="delTx(\'' + id + '\')">Eliminar</button>';
+    html += '</form>';
+    openSheet(html);
+  };
+
+  window.setT = function (t) {
+    txType = t;
+    var bg = $('#bg'), bi = $('#bi');
+    if (bg) bg.classList.toggle('on', t === 'gasto');
+    if (bi) bi.classList.toggle('on', t === 'ingreso');
+  };
+
+  window.addTx = function (e, id) {
+    e.preventDefault();
+    var f = new FormData(e.target);
+    var o = {
+      amount: +f.get('amount'),
+      desc: f.get('desc'),
+      cat: f.get('cat'),
+      date: f.get('date')
+    };
+    if (f.get('acc') !== null) o.acc = f.get('acc');
+
+    if (id) {
+      var t = null;
+      for (var i = 0; i < S.tx.length; i++) {
+        if (S.tx[i].id === id) { t = S.tx[i]; break; }
+      }
+      if (t) {
+        applyTx(t, -1);
+        for (var k in o) t[k] = o[k];
+        applyTx(t, 1);
+      }
+    } else {
+      var nt = { id: uid(), type: txType, acc: 'cash' };
+      for (var k2 in o) nt[k2] = o[k2];
+      applyTx(nt, 1);
+      S.tx.push(nt);
+    }
+    save();
+    closeSheet();
+    render();
+    return false;
+  };
+
+  function applyTx(t, dir) {
+    var a = acc(t.acc);
+    if (a) a.balance += (t.type === 'ingreso' ? 1 : -1) * t.amount * dir;
+    for (var i = 0; i < S.cards.length; i++) {
+      if (S.cards[i].id === t.card) {
+        S.cards[i].used += (t.type === 'gasto' ? 1 : -1) * t.amount * dir;
+        break;
+      }
+    }
+  }
+
+  window.delTx = function (id) {
+    var t = null;
+    for (var i = 0; i < S.tx.length; i++) {
+      if (S.tx[i].id === id) { t = S.tx[i]; break; }
+    }
+    if (!t) return;
+    ask('¿Eliminar este movimiento? Se ajustará el saldo de la cuenta.', 'Eliminar', function () {
+      applyTx(t, -1);
+      S.tx = S.tx.filter(function (x) { return x.id !== id; });
+      for (var r = 0; r < S.rec.length; r++) {
+        var paid = S.rec[r].paid;
+        if (paid) {
+          for (var k in paid) {
+            if (paid[k] === id) delete paid[k];
+          }
+        }
+      }
+      save();
+      render();
+    });
+  };
+
+  function rec() {
+    var m = mk();
+    var d = new Date().getDate();
+    var list = S.rec.slice().sort(function (a, b) { return a.day - b.day; });
+    var pend = 0;
+    for (var i = 0; i < list.length; i++) {
+      if (!list[i].paid || !list[i].paid[m]) pend += list[i].amount;
+    }
+    var html = '<h1>Pagos mensuales</h1>' + cardsSec() +
+      '<h2>Gastos fijos</h2>' +
+      '<div class="card row"><span>Pendiente este mes</span><b class="out">' + fmt(pend) + '</b></div>' +
+      '<button class="btn w" onclick="recForm()">+ Nuevo pago recurrente</button><h2>Lista</h2>';
+
+    if (!list.length) {
+      html += '<p class="mu">Agrega tu renta, luz, agua, tarjetas, préstamos…</p>';
+      return html;
+    }
+    for (var j = 0; j < list.length; j++) {
+      var r = list[j];
+      var paid = r.paid && r.paid[m];
+      var late = !paid && r.day < d;
+      var accName = '—';
+      var a = acc(r.acc);
+      if (a) accName = a.name;
+      html += '<div class="item"><div class="row"><div><b>' + esc(r.name) + '</b>' +
+        '<div class="mu">' + esc(r.kind) + ' · día ' + r.day + ' · ' + esc(accName) + '</div></div>' +
+        '<b>' + fmt(r.amount) + '</b></div>' +
+        '<div class="row" style="margin-top:8px">' +
+        (paid ? '<span class="ok">✓ Pagado este mes</span>' :
+          '<span class="' + (late ? 'out' : 'mu') + '">' + (late ? 'Vencido' : 'Pendiente') + '</span>') +
+        '<span>' +
+        (paid ? '<button class="btn s" onclick="unpay(\'' + r.id + '\')">Deshacer</button>' :
+          '<button class="btn s" onclick="pay(\'' + r.id + '\')">Marcar pagado</button>') +
+        '<button class="btn s" onclick="recForm(\'' + r.id + '\')">Editar</button></span></div></div>';
+    }
+    return html;
+  }
+
+  window.recForm = function (id) {
+    var r = null;
+    if (id) {
+      for (var i = 0; i < S.rec.length; i++) {
+        if (S.rec[i].id === id) { r = S.rec[i]; break; }
+      }
+    }
+    r = r || { name: '', kind: KINDS[0], amount: '', day: 1, acc: 'cash' };
+    var kindOpts = '';
+    for (var k = 0; k < KINDS.length; k++) {
+      kindOpts += '<option' + (KINDS[k] === r.kind ? ' selected' : '') + '>' + KINDS[k] + '</option>';
+    }
+    openSheet('<h1>' + (id ? 'Editar' : 'Nuevo') + ' pago recurrente</h1>' +
+      '<form onsubmit="return saveRec(event,\'' + (id || '') + '\')">' +
+      '<label>Nombre</label><input name="name" value="' + esc(r.name) + '" placeholder="Ej. Tarjeta BBVA, Renta" required>' +
+      '<label>Tipo</label><select name="kind">' + kindOpts + '</select>' +
+      '<label>Monto mensual</label><input name="amount" type="number" step="0.01" min="0" inputmode="decimal" value="' + r.amount + '" required>' +
+      '<label>Día del mes en que se paga</label><input name="day" type="number" min="1" max="31" value="' + r.day + '" required>' +
+      '<label>Se paga desde</label><select name="acc">' + accOpts(r.acc) + '</select>' +
+      '<button class="btn w">Guardar</button>' +
+      (id ? '<button type="button" class="btn w d" onclick="delRec(\'' + id + '\')">Eliminar</button>' : '') +
+      '</form>');
+  };
+
+  window.saveRec = function (e, id) {
+    e.preventDefault();
+    var f = new FormData(e.target);
+    var o = {
+      name: f.get('name'),
+      kind: f.get('kind'),
+      amount: +f.get('amount'),
+      day: +f.get('day'),
+      acc: f.get('acc')
+    };
+    if (id) {
+      for (var i = 0; i < S.rec.length; i++) {
+        if (S.rec[i].id === id) {
+          for (var k in o) S.rec[i][k] = o[k];
+          break;
+        }
+      }
+    } else {
+      var nr = { id: uid(), paid: {} };
+      for (var k2 in o) nr[k2] = o[k2];
+      S.rec.push(nr);
+    }
+    save();
+    closeSheet();
+    render();
+    return false;
+  };
+
+  window.delRec = function (id) {
+    ask('¿Eliminar este pago recurrente?', 'Eliminar', function () {
+      S.rec = S.rec.filter(function (x) { return x.id !== id; });
+      save();
+      render();
+    });
+  };
+
+  window.pay = function (id) {
+    var r = null;
+    for (var i = 0; i < S.rec.length; i++) {
+      if (S.rec[i].id === id) { r = S.rec[i]; break; }
+    }
+    if (!r) return;
+    ask('¿Registrar pago de ' + fmt(r.amount) + '? Se descontará de la cuenta.', 'Marcar pagado', function () {
+      var t = {
+        id: uid(),
+        type: 'gasto',
+        amount: r.amount,
+        desc: r.name,
+        cat: r.kind,
+        acc: r.acc,
+        date: today(),
+        recId: r.id
+      };
+      applyTx(t, 1);
+      S.tx.push(t);
+      if (!r.paid) r.paid = {};
+      r.paid[mk()] = t.id;
+      save();
+      render();
+    });
+  };
+
+  window.unpay = function (id) {
+    var r = null;
+    for (var i = 0; i < S.rec.length; i++) {
+      if (S.rec[i].id === id) { r = S.rec[i]; break; }
+    }
+    if (!r || !r.paid) return;
+    var tid = r.paid[mk()];
+    var t = null;
+    for (var j = 0; j < S.tx.length; j++) {
+      if (S.tx[j].id === tid) { t = S.tx[j]; break; }
+    }
+    if (t) {
+      applyTx(t, -1);
+      S.tx = S.tx.filter(function (x) { return x.id !== tid; });
+    }
+    delete r.paid[mk()];
+    save();
+    render();
+  };
+
+  function accounts() {
+    var total = 0;
+    for (var i = 0; i < S.accounts.length; i++) total += S.accounts[i].balance;
+    var html = '<h1>Cuentas y efectivo</h1>' +
+      '<div class="card"><div class="mu">Total</div><div class="big">' + fmt(total) + '</div></div>' +
+      dash() +
+      '<button class="btn w" onclick="accForm()">+ Agregar tarjeta / cuenta</button><h2>Mis cuentas</h2>';
+    for (var a = 0; a < S.accounts.length; a++) {
+      var accItem = S.accounts[a];
+      html += '<div class="item row" onclick="accForm(\'' + accItem.id + '\')">' +
+        '<div><b>' + esc(accItem.name) + '</b>' +
+        '<div class="mu">' + (accItem.id === 'cash' ? 'Efectivo' : (esc(accItem.bank) || '—')) + '</div></div>' +
+        '<b>' + fmt(accItem.balance) + '</b></div>';
+    }
+    html += toolsBar();
+    return html;
+  }
+
+  function dash() {
+    var m = mk();
+    var inc = 0, exp = 0;
+    var gs = [];
+    for (var i = 0; i < S.tx.length; i++) {
+      var t = S.tx[i];
+      if (t.date && t.date.indexOf(m) === 0) {
+        if (t.type === 'ingreso') inc += t.amount;
+        else if (t.type === 'gasto') {
+          exp += t.amount;
+          gs.push(t);
+        }
+      }
+    }
+    var net = inc - exp;
+    var mx = Math.max(inc, exp, 1);
+    function bar(p, c) {
+      return '<div style="height:10px;background:var(--bg);border:1px solid var(--bd);border-radius:2px;overflow:hidden">' +
+        '<div style="width:' + Math.max(0, Math.min(100, p)) + '%;height:100%;background:' + c + '"></div></div>';
+    }
+    var mes = new Date().toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
+    var cats = {};
+    for (var g = 0; g < gs.length; g++) {
+      var k = (gs[g].cat || '').trim() || 'Sin categoría';
+      cats[k] = (cats[k] || 0) + gs[g].amount;
+    }
+    var cl = [];
+    for (var cat in cats) cl.push([cat, cats[cat]]);
+    cl.sort(function (a, b) { return b[1] - a[1]; });
+    if (cl.length > 6) {
+      var other = 0;
+      for (var o = 5; o < cl.length; o++) other += cl[o][1];
+      cl = cl.slice(0, 5);
+      cl.push(['Otros', other]);
+    }
+    var total = 0;
+    for (var a = 0; a < S.accounts.length; a++) total += S.accounts[a].balance;
+    var fixed = 0;
+    for (var r = 0; r < S.rec.length; r++) fixed += S.rec[r].amount;
+    var cl_ = 0, cu = 0;
+    for (var c = 0; c < S.cards.length; c++) {
+      cl_ += S.cards[c].limit;
+      cu += S.cards[c].used;
+    }
+    var H = [];
+    function lv(v, g, o) { return v >= g ? 2 : v >= o ? 1 : 0; }
+    if (inc > 0) {
+      var r1 = net / inc * 100;
+      H.push([lv(r1, 20, 0), 'Ahorro del mes', r1.toFixed(0) + '% de tus ingresos', 'Meta sana: 20% o más']);
+    }
+    if (inc > 0 && fixed > 0) {
+      var r2 = fixed / inc * 100;
+      H.push([lv(-r2, -50, -70), 'Gastos fijos vs ingresos', r2.toFixed(0) + '%', 'Lo ideal es menos del 50%']);
+    }
+    if (cl_ > 0) {
+      var r3 = cu / cl_ * 100;
+      H.push([lv(-r3, -30, -60), 'Uso de tus tarjetas', r3.toFixed(0) + '% del límite', 'Mantenerlo bajo 30% cuida tu historial']);
+    }
+    if (exp > 0) {
+      var r4 = total / exp;
+      H.push([lv(r4, 3, 1), 'Colchón de efectivo', r4.toFixed(1) + ' meses de gasto', 'Meta: 3 meses o más']);
+    }
+    var col = ['var(--bad)', 'var(--wa)', 'var(--ok)'];
+    var lab = ['Atención', 'Regular', 'Bien'];
+    var avg = null;
+    if (H.length) {
+      var sum = 0;
+      for (var h = 0; h < H.length; h++) sum += H[h][0];
+      avg = sum / H.length;
+    }
+    var ov = avg === null ? '' : (avg >= 1.5 ? 2 : avg >= 0.75 ? 1 : 0);
+
+    var html = '<h2>Balance de ' + mes + '</h2>' +
+      '<div class="card"><div class="row"><span>Ingresos</span><b class="in">' + fmt(inc) + '</b></div>' +
+      bar(inc / mx * 100, 'var(--ok)') +
+      '<div class="row" style="margin-top:10px"><span>Gastos</span><b class="out">' + fmt(exp) + '</b></div>' +
+      bar(exp / mx * 100, 'var(--bad)') +
+      '<div class="row" style="margin-top:12px;border-top:1px solid var(--bd);padding-top:10px">' +
+      '<span>' + (net >= 0 ? 'Te sobra' : 'Te falta') + '</span>' +
+      '<b class="' + (net >= 0 ? 'in' : 'out') + '" style="font-size:20px">' + fmt(Math.abs(net)) + '</b></div></div>' +
+      '<div class="card"><b>En qué gastas</b>';
+    if (cl.length) {
+      for (var i2 = 0; i2 < cl.length; i2++) {
+        html += '<div style="margin-top:10px"><div class="row"><span>' + esc(cl[i2][0]) + '</span>' +
+          '<span class="mu">' + fmt(cl[i2][1]) + ' · ' + (cl[i2][1] / exp * 100).toFixed(0) + '%</span></div>' +
+          bar(cl[i2][1] / cl[0][1] * 100, 'var(--pr)') + '</div>';
+      }
+    } else {
+      html += '<p class="mu">Aún no hay gastos este mes.</p>';
+    }
+    html += '</div><div class="card"><div class="row"><b>Salud financiera</b>';
+    if (ov !== '') html += '<span style="color:' + col[ov] + ';font-weight:700">' + lab[ov] + '</span>';
+    html += '</div>';
+    if (H.length) {
+      for (var h2 = 0; h2 < H.length; h2++) {
+        var hItem = H[h2];
+        html += '<div class="row" style="margin-top:10px;align-items:flex-start"><div>' +
+          '<div>' + hItem[1] + '</div><div class="mu">' + hItem[3] + '</div></div>' +
+          '<div style="text-align:right;color:' + col[hItem[0]] + ';font-weight:600">' +
+          '<span style="display:inline-block;width:9px;height:9px;border-radius:1px;background:' + col[hItem[0]] + ';margin-right:6px"></span>' +
+          hItem[2] + '</div></div>';
+      }
+    } else {
+      html += '<p class="mu">Registra ingresos y gastos para ver tus indicadores.</p>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  window.accForm = function (id) {
+    var a = null;
+    if (id) {
+      for (var i = 0; i < S.accounts.length; i++) {
+        if (S.accounts[i].id === id) { a = S.accounts[i]; break; }
+      }
+    }
+    a = a || { name: '', bank: '', balance: '' };
+    openSheet('<h1>' + (id ? 'Editar' : 'Nueva') + ' cuenta</h1>' +
+      '<form onsubmit="return saveAcc(event,\'' + (id || '') + '\')">' +
+      '<label>Nombre de la tarjeta o cuenta</label>' +
+      '<input name="name" value="' + esc(a.name) + '" placeholder="Ej. Débito nómina" required>' +
+      '<label>Banco</label>' +
+      '<input name="bank" value="' + esc(a.bank) + '" placeholder="Ej. BBVA, Banorte"' + (id === 'cash' ? ' disabled' : '') + '>' +
+      '<label>Dinero que hay en ella</label>' +
+      '<input name="balance" type="number" step="0.01" inputmode="decimal" value="' + a.balance + '" required>' +
+      '<button class="btn w">Guardar</button>' +
+      (id && id !== 'cash' ? '<button type="button" class="btn w d" onclick="delAcc(\'' + id + '\')">Eliminar</button>' : '') +
+      '</form>');
+  };
+
+  window.saveAcc = function (e, id) {
+    e.preventDefault();
+    var f = new FormData(e.target);
+    var o = {
+      name: f.get('name'),
+      bank: f.get('bank') || '',
+      balance: +f.get('balance')
+    };
+    if (id) {
+      for (var i = 0; i < S.accounts.length; i++) {
+        if (S.accounts[i].id === id) {
+          for (var k in o) S.accounts[i][k] = o[k];
+          break;
+        }
+      }
+    } else {
+      var na = { id: uid() };
+      for (var k2 in o) na[k2] = o[k2];
+      S.accounts.push(na);
+    }
+    save();
+    closeSheet();
+    render();
+    return false;
+  };
+
+  window.delAcc = function (id) {
+    var used = false;
+    for (var i = 0; i < S.rec.length; i++) {
+      if (S.rec[i].acc === id) { used = true; break; }
+    }
+    if (used) {
+      openSheet('<h1>No se puede eliminar</h1>' +
+        '<p class="mu">Hay pagos recurrentes que usan esta cuenta. Cámbialos primero.</p>' +
+        '<button class="btn w" onclick="closeSheet()">Entendido</button>');
+      return;
+    }
+    ask('¿Eliminar esta cuenta?', 'Eliminar', function () {
+      S.accounts = S.accounts.filter(function (x) { return x.id !== id; });
+      save();
+      render();
+    });
+  };
+
+  function nextDate(day) {
+    var n = new Date();
+    n.setHours(0, 0, 0, 0);
+    function mk2(y, m) {
+      return new Date(y, m, Math.min(day, new Date(y, m + 1, 0).getDate()));
+    }
+    var d = mk2(n.getFullYear(), n.getMonth());
+    if (d < n) d = mk2(n.getFullYear(), n.getMonth() + 1);
+    return {
+      txt: d.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' }),
+      days: Math.round((d - n) / 864e5)
+    };
+  }
+  function inD(n) {
+    return n === 0 ? 'hoy' : n === 1 ? 'mañana' : 'en ' + n + ' días';
+  }
+
+  function cardsSec() {
+    var tl = 0, tu = 0;
+    for (var i = 0; i < S.cards.length; i++) {
+      tl += S.cards[i].limit;
+      tu += S.cards[i].used;
+    }
+    var html = '<h2>Tarjetas de crédito</h2>';
+    if (S.cards.length) {
+      html += '<div class="card">' +
+        '<div class="row"><span class="mu">Límite total</span><b>' + fmt(tl) + '</b></div>' +
+        '<div class="row"><span class="mu">Crédito gastado</span><b class="out">' + fmt(tu) + '</b></div>' +
+        '<div class="row"><span class="mu">Crédito disponible</span><b class="in">' + fmt(tl - tu) + '</b></div></div>';
+    }
+    for (var c = 0; c < S.cards.length; c++) {
+      var card = S.cards[c];
+      var cut = nextDate(card.cutDay);
+      var due = nextDate(card.dueDay);
+      var pct = card.limit ? Math.min(100, Math.round(card.used / card.limit * 100)) : 0;
+      html += '<div class="item"><div class="row"><div><b>' + esc(card.name) + '</b>' +
+        '<div class="mu">' + esc(card.bank) + '</div></div><b>' + fmt(card.limit) + '</b></div>' +
+        '<div style="height:8px;background:var(--bg);border:1px solid var(--bd);border-radius:2px;margin:10px 0 4px;overflow:hidden">' +
+        '<div style="width:' + pct + '%;height:100%;background:' + (pct >= 80 ? 'var(--bad)' : 'var(--pr)') + '"></div></div>' +
+        '<div class="row mu"><span>Gastado ' + fmt(card.used) + ' (' + pct + '%)</span>' +
+        '<span>Disponible ' + fmt(card.limit - card.used) + '</span></div>' +
+        '<div class="row" style="margin-top:8px"><span>Fecha de corte</span><b>' + cut.txt +
+        ' <span class="mu">(' + inD(cut.days) + ')</span></b></div>' +
+        '<div class="row"><span>Fecha de pago</span><b class="' + (due.days <= 3 ? 'out' : '') + '">' + due.txt +
+        ' <span class="mu">(' + inD(due.days) + ')</span></b></div>' +
+        '<div class="row" style="margin-top:10px;justify-content:flex-end;gap:6px">' +
+        '<button class="btn s" onclick="buyForm(\'' + card.id + '\')">+ Compra</button>' +
+        '<button class="btn s" onclick="cpayForm(\'' + card.id + '\')">Pagar</button>' +
+        '<button class="btn s" onclick="cardForm(\'' + card.id + '\')">Editar</button></div></div>';
+    }
+    html += '<button class="btn w" onclick="cardForm()">+ Agregar tarjeta de crédito</button>';
+    return html;
+  }
+
+  window.cardForm = function (id) {
+    var c = null;
+    if (id) {
+      for (var i = 0; i < S.cards.length; i++) {
+        if (S.cards[i].id === id) { c = S.cards[i]; break; }
+      }
+    }
+    c = c || { name: '', bank: '', limit: '', used: 0, cutDay: 1, dueDay: 20 };
+    openSheet('<h1>' + (id ? 'Editar' : 'Nueva') + ' tarjeta de crédito</h1>' +
+      '<form onsubmit="return saveCard(event,\'' + (id || '') + '\')">' +
+      '<label>Nombre</label><input name="name" value="' + esc(c.name) + '" placeholder="Ej. Oro, Platinum" required>' +
+      '<label>Banco</label><input name="bank" value="' + esc(c.bank) + '" placeholder="Ej. BBVA">' +
+      '<label>Límite de crédito</label><input name="limit" type="number" step="0.01" min="0" inputmode="decimal" value="' + c.limit + '" required>' +
+      '<label>Crédito gastado (saldo actual)</label><input name="used" type="number" step="0.01" min="0" inputmode="decimal" value="' + c.used + '" required>' +
+      '<label>Día de corte</label><input name="cutDay" type="number" min="1" max="31" value="' + c.cutDay + '" required>' +
+      '<label>Día límite de pago</label><input name="dueDay" type="number" min="1" max="31" value="' + c.dueDay + '" required>' +
+      '<button class="btn w">Guardar</button>' +
+      (id ? '<button type="button" class="btn w d" onclick="delCard(\'' + id + '\')">Eliminar</button>' : '') +
+      '</form>');
+  };
+
+  window.saveCard = function (e, id) {
+    e.preventDefault();
+    var f = new FormData(e.target);
+    var o = {
+      name: f.get('name'),
+      bank: f.get('bank') || '',
+      limit: +f.get('limit'),
+      used: +f.get('used'),
+      cutDay: +f.get('cutDay'),
+      dueDay: +f.get('dueDay')
+    };
+    if (id) {
+      for (var i = 0; i < S.cards.length; i++) {
+        if (S.cards[i].id === id) {
+          for (var k in o) S.cards[i][k] = o[k];
+          break;
+        }
+      }
+    } else {
+      var nc = { id: uid() };
+      for (var k2 in o) nc[k2] = o[k2];
+      S.cards.push(nc);
+    }
+    save();
+    closeSheet();
+    render();
+    return false;
+  };
+
+  window.delCard = function (id) {
+    ask('¿Eliminar esta tarjeta?', 'Eliminar', function () {
+      S.cards = S.cards.filter(function (x) { return x.id !== id; });
+      save();
+      render();
+    });
+  };
+
+  window.buyForm = function (id) {
+    var c = null;
+    for (var i = 0; i < S.cards.length; i++) {
+      if (S.cards[i].id === id) { c = S.cards[i]; break; }
+    }
+    if (!c) return;
+    openSheet('<h1>Compra con ' + esc(c.name) + '</h1>' +
+      '<form onsubmit="return addCardTx(event,\'' + id + '\',\'gasto\')">' +
+      '<label>Monto</label><input name="amount" type="number" step="0.01" min="0" inputmode="decimal" required>' +
+      '<label>Descripción</label><input name="desc" placeholder="Ej. Gasolina">' +
+      '<button class="btn w">Registrar compra</button></form>');
+  };
+
+  window.cpayForm = function (id) {
+    var c = null;
+    for (var i = 0; i < S.cards.length; i++) {
+      if (S.cards[i].id === id) { c = S.cards[i]; break; }
+    }
+    if (!c) return;
+    openSheet('<h1>Pagar ' + esc(c.name) + '</h1>' +
+      '<form onsubmit="return addCardTx(event,\'' + id + '\',\'pago\')">' +
+      '<label>Monto a pagar</label>' +
+      '<input name="amount" type="number" step="0.01" min="0" inputmode="decimal" value="' + Math.max(0, c.used) + '" required>' +
+      '<label>Pagar desde</label><select name="acc">' + accOpts('cash') + '</select>' +
+      '<button class="btn w">Registrar pago</button></form>');
+  };
+
+  window.addCardTx = function (e, id, type) {
+    e.preventDefault();
+    var f = new FormData(e.target);
+    var c = null;
+    for (var i = 0; i < S.cards.length; i++) {
+      if (S.cards[i].id === id) { c = S.cards[i]; break; }
+    }
+    if (!c) return false;
+    var t = {
+      id: uid(),
+      type: type,
+      amount: +f.get('amount'),
+      card: id,
+      date: today(),
+      cat: 'Tarjeta de crédito',
+      desc: type === 'pago' ? 'Pago ' + c.name : (f.get('desc') || 'Compra ' + c.name),
+      acc: type === 'pago' ? f.get('acc') : ''
+    };
+    applyTx(t, 1);
+    S.tx.push(t);
+    save();
+    closeSheet();
+    render();
+    return false;
+  };
+
+  // Arranque
+  try {
+    render();
+  } catch (err) {
+    var app = document.getElementById('app');
+    if (app) {
+      app.innerHTML = '<div class="card" style="margin:20px"><h1>Error al iniciar</h1>' +
+        '<p class="mu">' + esc(String(err)) + '</p></div>';
+    }
+  }
+})();
+</script>
+</body>
+</html>
